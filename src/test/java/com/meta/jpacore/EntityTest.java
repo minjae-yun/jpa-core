@@ -1,11 +1,14 @@
 package com.meta.jpacore;
 
 
+import com.meta.jpacore.entity.Memo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class EntityTest {
@@ -19,7 +22,60 @@ public class EntityTest {
   }
 
   @Test
+  @DisplayName("EntityTransaction 성공 테스트")
   void test1(){
+    EntityTransaction et = em.getTransaction(); // EntityManager에서 Transaction 가져오기.
+    et.begin(); // Transaction 시작
 
+    try {
+      // 저장할 엔터티 객체 생성
+      Memo memo = new Memo();
+//      memo.setId(1L); // id 식별자 값 detached entity passed to persist // id auto-increment와의 충돌 오류 해결
+      memo.setUsername("김메타"); // 유저 이름
+      memo.setContents("테스트코드로 넣는 메모 1"); // 내용 작성
+
+      // 엔터티 매니저가 영속성 컨텍스트에 Entity 관리
+      em.persist(memo);
+
+      // 트랜잭션 커밋
+      et.commit();
+    } catch (Exception e){
+        e.printStackTrace();
+        // 실패시, 트랜잭션 롤백
+        et.rollback();
+    }finally {
+      em.close();
+    }
+
+    emf.close();
+  }
+
+  @Test
+  @DisplayName("EntityTransaction 실패 테스트")
+  void test2(){
+    EntityTransaction et = em.getTransaction(); // EntityManager에서 Transaction 가져오기.
+    et.begin(); // Transaction 시작
+
+    try {
+      // 저장할 엔터티 객체 생성
+      Memo memo = new Memo();
+      memo.setUsername("김메타"); // 유저 이름
+      memo.setContents("테스트코드로 넣는 메모 2"); // 내용 작성
+
+      // 엔터티 매니저가 영속성 컨텍스트에 Entity 관리
+      em.persist(memo);
+
+      // 트랜잭션 커밋
+      et.commit();
+    } catch (Exception e){
+      e.printStackTrace();
+      // 실패시, 트랜잭션 롤백
+      et.rollback();
+    }finally {
+      em.close();
+    }
+
+    emf.close();
   }
 }
+

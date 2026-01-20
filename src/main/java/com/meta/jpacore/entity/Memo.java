@@ -2,12 +2,14 @@ package com.meta.jpacore.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Setter;
 
 @Entity // JPA가 관리 할 수 있는 Entity 클래스로 지정
 //@Table(name = "memo") // Default가 클래스 이름
+@Setter
 public class Memo {
   @Id //Primary key 설정 (식별자 역할 index)
-  @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment 기능
+//  @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment 기능
   private Long id;
 
   //nullable : NUll 허용 여부

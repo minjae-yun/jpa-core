@@ -244,6 +244,33 @@ public class EntityTest {
     emf.close();
   }
 
+  @Test
+  @DisplayName("변경 감지 확인")
+  void test10(){
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+
+    try {
+      Memo memo = em.find(Memo.class, 10L);
+      System.out.println("memo.getId() = " + memo.getId());
+      System.out.println("memo.getUsername() = " + memo.getUsername());
+      System.out.println("memo.getContents() = " + memo.getContents());
+
+      System.out.println("\n메모 수정을 진행 합니다.");
+      memo.setUsername("김수정");
+      memo.setContents("변경 감지 확인");
+
+      System.out.println("---트랜잭션 commit 전---");
+      et.commit();
+      System.out.println("---트랜잭션 commit 후---");
+
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      em.close();
+    }
+    emf.close();
+  }
 
 }
 

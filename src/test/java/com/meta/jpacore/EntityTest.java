@@ -77,5 +77,66 @@ public class EntityTest {
 
     emf.close();
   }
+
+  @Test
+  @DisplayName("1차 캐시 : ENtity 저장")
+  void test3(){
+    EntityTransaction et = em.getTransaction(); // EntityManager에서 Transaction 가져오기.
+    et.begin(); // Transaction 시작
+
+    try {
+      Memo memo = new Memo();
+      memo.setId(10L);
+      memo.setUsername("김메타10"); // 유저 이름
+      memo.setContents("1차 캐시 Entity 저장"); // 내용 작성
+
+      em.persist(memo);
+
+      // 트랜잭션 커밋
+      et.commit();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      em.close();
+    }
+    emf.close();
+
+
+  }
+
+  @Test
+  @DisplayName("1차 캐시 : 캐시 저장소에 해당하는 Id가 존재하지 않는 겨우")
+  void test4(){
+    try {
+      Memo memo = em.find(Memo.class, 10L);
+      System.out.println("memo.getId() = " + memo.getId());
+      System.out.println("memo.getUsername() = " + memo.getUsername());
+      System.out.println("memo.getContents() = " + memo.getContents());
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      em.close();
+    }
+    emf.close();
+  }
+  @Test
+  @DisplayName("1차 캐시 : 캐시 저장소에 해당하는 Id가 존재하지 하는 경우")
+  void test5(){
+    try {
+      Memo memo1 = em.find(Memo.class, 10L);
+      System.out.println("memo 10번 조회 후 캐시 저장소에 보관 됨");
+
+      Memo memo2 = em.find(Memo.class, 10L);
+      System.out.println("memo.getId() = " + memo2.getId());
+      System.out.println("memo.getUsername() = " + memo2.getUsername());
+      System.out.println("memo.getContents() = " + memo2.getContents());
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      em.close();
+    }
+    emf.close();
+  }
+
 }
 

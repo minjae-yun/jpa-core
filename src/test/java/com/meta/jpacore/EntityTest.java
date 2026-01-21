@@ -182,5 +182,38 @@ public class EntityTest {
     }
     emf.close();
   }
+
+
+  @Test
+  @DisplayName("쓰기 지연 저장소 Action Queue 확인")
+  void test8(){
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+
+    try {
+      Memo memo1 = new Memo();
+      memo1.setId(10L);
+      memo1.setUsername("김메타10");
+      memo1.setContents("쓰기 지연 저장소 Action Queue 확인");
+      em.persist(memo1);
+
+      Memo memo2 = new Memo();
+      memo2.setId(10L);
+      memo2.setUsername("김메타11");
+      memo2.setContents("저장을 잘하고 있을까?");
+      em.persist(memo2);
+      System.out.println("---트랜잭션 commit 전---");
+      et.commit();
+      System.out.println("---트랜잭션 commit 후---");
+
+
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      em.close();
+    }
+    emf.close();
+  }
+
 }
 

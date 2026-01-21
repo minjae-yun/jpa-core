@@ -272,5 +272,42 @@ public class EntityTest {
     emf.close();
   }
 
+  @Test
+  @DisplayName("Entity의 상태 확인")
+  void test11(){
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+
+    try {
+      Memo memo = new Memo();  // 비영속 상태
+      memo.setId(13L);
+      memo.setUsername("김메타13");
+      memo.setContents("Entity의 상태 확인");
+
+      // 영속 상태
+      em.persist(memo);
+      Memo foundMemo = em.find(Memo.class, 13L);
+      // em.contains(entity명) : Entity 객체가 현재 영속성 컨텍스트에 저장되어 관리되고 있는지 확인메서드
+      System.out.println("em.contains(foundMemo) = " + em.contains(foundMemo));
+
+      System.out.println("--- detach() 호출 전---");
+      em.detach(foundMemo);
+      System.out.println("---detach() 호출 후---");
+
+      foundMemo.setUsername("김시도");
+      foundMemo.setContents("준영속 상태의 엔터티 변경 시도");
+
+      System.out.println("---트랜잭션 commit 전---");
+      et.commit();
+      System.out.println("---트랜잭션 commit 후---");
+
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      em.close();
+    }
+    emf.close();
+  }
+
 }
 

@@ -2,10 +2,7 @@ package com.meta.jpacore;
 
 
 import com.meta.jpacore.entity.Memo;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -138,5 +135,52 @@ public class EntityTest {
     emf.close();
   }
 
+  @Test
+  @DisplayName("객체 동일성 보장 확인")
+  void test6(){
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+
+    try {
+      Memo memo = new Memo();
+      memo.setId(11L);
+      memo.setUsername("김메타11");
+      memo.setContents("객체 동일성 보장");
+      em.persist(memo);
+
+      Memo memo9 = em.find(Memo.class, 9L);
+      Memo memo9_1 = em.find(Memo.class, 9L);
+      Memo memo10 = em.find(Memo.class, 10L);
+
+      System.out.println("memo9 == memo9_1 : " + (memo9 == memo9_1));
+      System.out.println("memo9 == memo10 : " + (memo9 == memo10));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      em.close();
+    }
+    emf.close();
+
+  }
+
+  @Test
+  @DisplayName("Entity 삭제")
+  void test7(){
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+
+    try {
+      Memo memo = em.find(Memo.class, 9L);
+      em.remove(memo);
+
+      et.commit();
+
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      em.close();
+    }
+    emf.close();
+  }
 }
 
